@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>On suit l'extrême droite</title>
+<style>
+  :root {
+    --bleu: #002395;
+    --blanc: #ffffff;
+    --rouge: #ED2939;
+    --bleu-clair: #0038a8;
+    --fond: #0a1628;
+    --carte: #12203a;
+    --texte: #f5f5f5;
+    --muted: #a0aec0;
+    --succes: #2ecc71;
+  }
+  [data-theme="light"] {
+    --fond: #f8fafc;
+    --carte: #ffffff;
+    --texte: #1e293b;
+    --muted: #64748b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--fond);
+    color: var(--texte);
+    line-height: 1.6;
+    min-height: 100vh;
+    transition: background 0.2s, color 0.2s;
+  }
+  header { padding: 20px 20px 10px; text-align: center; }
+  header h1 { font-size: 2.1rem; font-weight: 800; margin-top: 12px; letter-spacing: -0.5px; }
+  header p { color: var(--muted); margin-top: 6px; font-size: 1rem; }
+  main { max-width: 920px; margin: 0 auto; padding: 20px 20px 60px; }
+  .warning {
+    background: rgba(237, 41, 57, 0.08);
+    border-left: 3px solid var(--rouge);
+    padding: 12px 16px;
+    margin: 20px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.9rem;
+    color: #e2e8f0;
+  }
+  [data-theme="light"] .warning { color: #1e293b; }
+  .controls {
+    background: var(--carte);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 6px; font-weight: 500; }
+  input, button, select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #2a3a5a;
+    background: #0e1a30;
+    color: var(--texte);
+    font-size: 1rem;
+  }
+  [data-theme="light"] input, [data-theme="light"] button, [data-theme="light"] select {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #1e293b;
+  }
+  input:focus { outline: none; border-color: var(--bleu-clair); }
+  button {
+    background: var(--rouge);
+    border: none;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+  }
+  button:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  #stopBtn, #resetBtn, .secondary { background: #4a5568; }
+  #status {
+    background: var(--carte);
+    padding: 16px 18px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    min-height: 64px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .progress { font-weight: 700; color: var(--succes); }
+  .progress-bar {
+    height: 8px;
+    background: #1e2a44;
+    border-radius: 4px;
+    margin: 10px 0;
+    overflow: hidden;
+  }
+  .progress-bar > div {
+    height: 100%;
+    background: linear-gradient(90deg, var(--bleu), var(--rouge));
+    width: 0%;
+    transition: width 0.3s;
+  }
+  .search { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px; }
+  .search input { flex:1; min-width:140px; }
+  .search button { width:auto; padding:12px 18px; }
+  .top3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:20px 0; }
+  .top3-card {
+    background: var(--carte);
+    padding:14px;
+    border-radius:10px;
+    text-align:center;
+    border:1px solid rgba(255,255,255,0.06);
+  }
+  .top3-card img { width:48px; height:48px; border-radius:50%; margin-bottom:8px; }
+  #list { display: grid; gap: 10px; }
+  .account {
+    background: var(--carte);
+    padding: 12px 16px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: border-color 0.2s;
+  }
+  .account:hover { border-color: var(--bleu-clair); }
+  .account a { color: var(--texte); text-decoration: none; font-weight: 600; }
+  .account a:hover { text-decoration: underline; }
+  .done { opacity: 0.45; }
+  .badge { font-size:0.75rem; padding:2px 8px; border-radius:99px; background:var(--succes); color:#000; font-weight:700; }
+  .legal { margin-top: 50px; padding-top: 24px; border-top: 1px solid #2a3a5a; font-size: 0.88rem; color: var(--muted); }
+  .legal h2 { color: var(--texte); font-size: 1.15rem; margin: 1.4em 0 0.6em; }
+  footer { text-align: center; padding: 20px; font-size: 0.8rem; color: #64748b; border-top: 1px solid #1e2a44; }
+  .platforms { display:flex; gap:6px; font-size:0.75rem; }
+  .platforms a { opacity:0.7; }
+  .platforms a:hover { opacity:1; }
+</style>
+</head>
+<body>
+<header>
+  <img src="banner.jpg" alt="On suit l'extrême droite" style="width:100%; max-width:900px; height:auto; border-radius:12px; margin-bottom:20px; display:block; margin-left:auto; margin-right:auto; box-shadow:0 4px 20px rgba(0,0,0,0.4);">
+  <h1>On suit l'extrême droite</h1>
+  <p>Outil de suivi progressif</p>
+</header>
+
+<main>
+  <div class="warning">
+    <strong>Limites X :</strong> espace tes follows (recommandé : 1 toutes les 5-10 min). Trop rapide = restriction.
+  </div>
+
+  <div class="controls">
+    <div>
+      <label>Nombre de comptes par session</label>
+      <input type="number" id="batchSize" value="10" min="1" max="50">
+    </div>
+    <div>
+      <label>Intervalle entre chaque (minutes)</label>
+      <input type="number" id="intervalMin" value="5" min="1" max="120">
+    </div>
+    <div>
+      <label>&nbsp;</label>
+      <button id="startBtn">Démarrer le suivi</button>
+    </div>
+    <div>
+      <label>&nbsp;</label>
+      <button id="stopBtn" disabled>Arrêter</button>
+    </div>
+  </div>
+
+  <div id="status">Prêt. Configure le rythme puis démarre.</div>
+  <div class="progress-bar"><div id="progressFill"></div></div>
+  <div id="progressText" style="text-align:center; font-size:0.9rem; color:var(--muted); margin-bottom:16px;"></div>
+
+  <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+    <button id="nextManual" class="secondary" style="width:auto;">Ouvrir le suivant</button>
+    <button id="themeBtn" class="secondary" style="width:auto;">Mode clair</button>
+    <select id="filterMode" style="width:auto;">
+      <option value="all">Tous</option>
+      <option value="todo">Non ouverts</option>
+      <option value="done">Ouverts</option>
+    </select>
+    <select id="sortMode" style="width:auto;">
+      <option value="default">Ordre par défaut</option>
+      <option value="alpha">Alphabétique</option>
+      <option value="status">Par statut</option>
+    </select>
+  </div>
+
+  <h3 style="margin:20px 0 10px;">Top 3 à suivre</h3>
+  <div class="top3" id="top3"></div>
+
+  <div class="search">
+    <input type="text" id="search" placeholder="Rechercher...">
+    <input type="text" id="newAccount" placeholder="Compte X (@handle)">
+    <input type="text" id="newIg" placeholder="Instagram">
+    <input type="text" id="newFb" placeholder="Facebook">
+    <input type="text" id="newTt" placeholder="TikTok">
+    <input type="text" id="newYt" placeholder="YouTube">
+    <input type="text" id="newTg" placeholder="Telegram">
+    <button id="addBtn">Ajouter</button>
+  </div>
+
+  <div style="margin-bottom:16px; display:flex; gap:10px; flex-wrap:wrap;">
+    <button id="exportBtn" class="secondary" style="width:auto;">Exporter la liste</button>
+    <button id="importBtn" class="secondary" style="width:auto;">Importer</button>
+    <input type="file" id="importFile" accept=".json" style="display:none;">
+  </div>
+
+  <div id="list"></div>
+
+  <div class="legal">
+    <h2>Mentions légales</h2>
+    <p>Éditeur du site : @SouverainA50 (particulier)</p>
+    <p>Contact : @SouverainA50 — suivisExtdroite@proton.me</p>
+    <p>Hébergeur : GitHub, Inc. – GitHub Pages<br>88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis</p>
+    <p>Le site est un outil d’information et d’aide à la consultation de comptes publics sur X. Il ne constitue pas un fichier, une base de données d’opinions politiques ou un outil de surveillance.</p>
+
+    <h2>Politique de confidentialité</h2>
+    <p>Dernière mise à jour : 30 octobre 2026</p>
+    <p><strong>1. Responsable du traitement</strong><br>@SouverainA50 (particulier)<br>Contact : @SouverainA50 — suivisExtdroite@proton.me</p>
+    <p><strong>2. Données traitées</strong><br>Aucune donnée n’est collectée ni stockée sur un serveur du responsable.<br>Les seules données traitées le sont exclusivement dans votre navigateur via le localStorage :
+    <ul>
+      <li>la liste des comptes que vous avez déjà ouverts (clé <code>followed</code>) ;</li>
+      <li>les comptes que vous ajoutez vous-même (clé <code>customAccounts</code>).</li>
+    </ul>
+    Ces données ne quittent jamais votre appareil.</p>
+    <p><strong>3. Finalités</strong><br>Mémoriser votre progression et les comptes ajoutés.</p>
+    <p><strong>4. Base juridique</strong><br>Exécution du service demandé (art. 6.1.b) et intérêt légitime (art. 6.1.f).</p>
+    <p><strong>5. Destinataires</strong><br>Aucun. Les liens vers x.com sont externes.</p>
+    <p><strong>6. Hébergeur</strong><br>GitHub peut traiter des logs techniques (IP). Voir politique GitHub.</p>
+    <p><strong>7. Durée</strong><br>Jusqu’à suppression manuelle ou via le bouton ci-dessous.</p>
+    <p><strong>8. Vos droits</strong><br>Accès, rectification, effacement, opposition, limitation. Réclamation CNIL possible. Contact : suivisExtdroite@proton.me</p>
+    <p><strong>9. Sécurité</strong><br>Données uniquement locales.</p>
+    <p><strong>10. Cookies</strong><br>Aucun cookie ni traceur.</p>
+    <p><button id="resetBtn" style="margin-top:12px; background:#4a5568;">Réinitialiser ma progression</button></p>
+  </div>
+</main>
+
+<footer>
+  Outil non affilié à X/Twitter. Utilisation à tes risques. Respecte les conditions d’utilisation de X.
+</footer>
+
+<script>
+const defaultAccounts = [
+  {handle:"J_Bardella", ig:"", fb:""},
+  {handle:"MLP_officiel", ig:"", fb:""},
+  {handle:"ZemmourEric", ig:"", fb:""},
+  {handle:"knafo_sarah", ig:"", fb:""},
+  {handle:"MarionMarechal", ig:"", fb:""},
+  {handle:"RNational_off", ig:"", fb:""},
+  {handle:"Reconquete_off", ig:"", fb:""},
+  {handle:"CNEWS", ig:"", fb:""},
+  {handle:"Frontieresmedia", ig:"", fb:""},
+  {handle:"DamienRieu", ig:"", fb:""}
+];
+
+let accounts = JSON.parse(localStorage.getItem("customAccounts") || "null") || defaultAccounts.map(a => ({...a}));
+let done = new Set(JSON.parse(localStorage.getItem("followed") || "[]"));
+let timer = null;
+let running = false;
+let currentBatch = 0;
+let batchLimit = 10;
+
+function save() {
+  localStorage.setItem("customAccounts", JSON.stringify(accounts));
+  localStorage.setItem("followed", JSON.stringify([...done]));
+}
+
+function avatar(handle) {
+  return `https://unavatar.io/x/${handle}`;
+}
+
+function initial(handle) {
+  return handle.charAt(0).toUpperCase();
+}
+
+function renderTop3() {
+  const top = ["J_Bardella", "MLP_officiel", "ZemmourEric"];
+  const el = document.getElementById("top3");
+  el.innerHTML = top.map(h => `
+    <div class="top3-card">
+      <img src="${avatar(h)}" onerror="this.style.display='none'">
+      <div><strong>@${h}</strong></div>
+      <a href="https://x.com/${h}" target="_blank">Voir</a>
+    </div>
+  `).join("");
+}
+
+function renderList() {
+  const filter = document.getElementById("search").value.toLowerCase();
+  const mode = document.getElementById("filterMode").value;
+  const sort = document.getElementById("sortMode").value;
+  let list = accounts.filter(a => a.handle.toLowerCase().includes(filter));
+  if (mode === "todo") list = list.filter(a => !done.has(a.handle));
+  if (mode === "done") list = list.filter(a => done.has(a.handle));
+  if (sort === "alpha") list.sort((a,b) => a.handle.localeCompare(b.handle));
+  if (sort === "status") list.sort((a,b) => done.has(a.handle) - done.has(b.handle));
+
+  const container = document.getElementById("list");
+  container.innerHTML = "";
+  list.forEach(acc => {
+    const div = document.createElement("div");
+    div.className = "account" + (done.has(acc.handle) ? " done" : "");
+    const platforms = [];
+    if (acc.ig) platforms.push(`<a href="https://instagram.com/${acc.ig}" target="_blank">IG</a>`);
+    if (acc.fb) platforms.push(`<a href="https://facebook.com/${acc.fb}" target="_blank">FB</a>`);
+    if (acc.tt) platforms.push(`<a href="https://tiktok.com/@${acc.tt}" target="_blank">TT</a>`);
+    if (acc.yt) platforms.push(`<a href="${acc.yt.startsWith('http') ? acc.yt : 'https://youtube.com/@'+acc.yt}" target="_blank">YT</a>`);
+    if (acc.tg) platforms.push(`<a href="https://t.me/${acc.tg}" target="_blank">TG</a>`);
+    div.innerHTML = `
+      <div style="display:flex; align-items:center; gap:10px;">
+        <img src="${avatar(acc.handle)}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;background:#1a2744;" onerror="this.outerHTML='<div style=\\'width:36px;height:36px;border-radius:50%;background:#002395;display:flex;align-items:center;justify-content:center;font-weight:700;\\'>${initial(acc.handle)}</div>'">
+        <div>
+          <a href="https://x.com/${acc.handle}" target="_blank">@${acc.handle}</a>
+          <div class="platforms">${platforms.join(" · ")}</div>
+        </div>
+      </div>
+      <div>
+        ${done.has(acc.handle) ? '<span class="badge">ouvert</span>' : ""}
+        <button onclick="openOne('${acc.handle}')" style="width:auto;padding:6px 10px;font-size:0.8rem;margin-left:6px;">Suivre</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = accounts.length;
+  const opened = accounts.filter(a => done.has(a.handle)).length;
+  const pct = total ? Math.round((opened/total)*100) : 0;
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("progressText").textContent = `${opened} / ${total} comptes ouverts (${pct}%)`;
+}
+
+function openOne(handle) {
+  window.open(`https://x.com/${handle}`, "_blank");
+  done.add(handle);
+  save();
+  renderList();
+  if ("Notification" in window && Notification.permission === "granted") {
+    new Notification("Compte ouvert", {body: "@" + handle});
+  }
+}
+
+function openNext() {
+  if (!running) return;
+  if (currentBatch >= batchLimit) {
+    stop();
+    updateStatus(`Session terminée (${batchLimit} comptes).`);
+    return;
+  }
+  const remaining = accounts.filter(a => !done.has(a.handle));
+  if (!remaining.length) {
+    stop();
+    updateStatus("Tous les comptes ont été ouverts.");
+    return;
+  }
+  openOne(remaining[0].handle);
+  currentBatch++;
+  updateStatus(`<span class="progress">${currentBatch}/${batchLimit}</span> — Ouvert : @${remaining[0].handle}<br>Prochain dans ${document.getElementById("intervalMin").value} min.`);
+  const intervalMs = parseInt(document.getElementById("intervalMin").value) * 60 * 1000;
+  timer = setTimeout(openNext, intervalMs);
+}
+
+function start() {
+  if (!confirm("Démarrer le suivi automatique ?")) return;
+  batchLimit = parseInt(document.getElementById("batchSize").value) || 10;
+  currentBatch = 0;
+  running = true;
+  document.getElementById("startBtn").disabled = true;
+  document.getElementById("stopBtn").disabled = false;
+  if ("Notification" in window && Notification.permission === "default") Notification.requestPermission();
+  updateStatus("Démarrage...");
+  openNext();
+}
+
+function stop() {
+  running = false;
+  clearTimeout(timer);
+  document.getElementById("startBtn").disabled = false;
+  document.getElementById("stopBtn").disabled = true;
+  updateStatus("Arrêté. Progression sauvegardée localement.");
+}
+
+function addAccount() {
+  const handle = document.getElementById("newAccount").value.trim().replace(/^@/, "");
+  const ig = document.getElementById("newIg").value.trim().replace(/^@/, "");
+  const fb = document.getElementById("newFb").value.trim();
+  const tt = document.getElementById("newTt").value.trim().replace(/^@/, "");
+  const yt = document.getElementById("newYt").value.trim();
+  const tg = document.getElementById("newTg").value.trim().replace(/^@/, "");
+  if (!handle || accounts.some(a => a.handle === handle)) return;
+  accounts.push({handle, ig, fb, tt, yt, tg});
+  save();
+  ["newAccount","newIg","newFb","newTt","newYt","newTg"].forEach(id => document.getElementById(id).value = "");
+  renderList();
+}
+
+document.getElementById("startBtn").onclick = start;
+document.getElementById("stopBtn").onclick = stop;
+document.getElementById("addBtn").onclick = addAccount;
+document.getElementById("newAccount").onkeydown = e => { if (e.key === "Enter") addAccount(); };
+document.getElementById("search").oninput = renderList;
+document.getElementById("filterMode").onchange = renderList;
+document.getElementById("sortMode").onchange = renderList;
+document.getElementById("nextManual").onclick = () => {
+  const remaining = accounts.filter(a => !done.has(a.handle));
+  if (remaining.length) openOne(remaining[0].handle);
+};
+document.getElementById("themeBtn").onclick = () => {
+  const current = document.body.dataset.theme;
+  document.body.dataset.theme = current === "light" ? "" : "light";
+  document.getElementById("themeBtn").textContent = current === "light" ? "Mode clair" : "Mode sombre";
+};
+document.getElementById("exportBtn").onclick = () => {
+  const blob = new Blob([JSON.stringify(accounts, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "comptes.json";
+  a.click();
+};
+document.getElementById("importBtn").onclick = () => document.getElementById("importFile").click();
+document.getElementById("importFile").onchange = e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (Array.isArray(data)) {
+        accounts = data;
+        save();
+        renderList();
+      }
+    } catch {}
+  };
+  reader.readAsText(file);
+};
+document.getElementById("resetBtn").onclick = () => {
+  if (confirm("Effacer toute la progression et les comptes ajoutés ?")) {
+    localStorage.removeItem("followed");
+    localStorage.removeItem("customAccounts");
+    done = new Set();
+    accounts = defaultAccounts.map(a => ({...a}));
+    save();
+    renderList();
+    updateStatus("Progression réinitialisée.");
+  }
+};
+
+function updateStatus(msg) {
+  document.getElementById("status").innerHTML = msg;
+}
+
+renderTop3();
+renderList();
+</script>
+</body>
+</html>
